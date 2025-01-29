@@ -1,0 +1,39 @@
+{
+  "Version": 1,
+  "Hash": "9UuJnpH21YH5Cv3bIdnjht2/bVPhx9UEPYbxQXbdA6E=",
+  "Source": "ProgettoMeteo",
+  "BasePath": "_content/ProgettoMeteo",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [
+    {
+      "Name": "ProgettoMeteo\\wwwroot",
+      "Source": "ProgettoMeteo",
+      "ContentRoot": "C:\\Users\\Utente\\Desktop\\SOFIA STAGE\\ProgettoMeteo\\wwwroot\\",
+      "BasePath": "_content/ProgettoMeteo",
+      "Pattern": "**"
+    }
+  ],
+  "Assets": [
+    {
+      "Identity": "C:\\Users\\Utente\\Desktop\\SOFIA STAGE\\ProgettoMeteo\\wwwroot\\index.html",
+      "SourceId": "ProgettoMeteo",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Utente\\Desktop\\SOFIA STAGE\\ProgettoMeteo\\wwwroot\\",
+      "BasePath": "_content/ProgettoMeteo",
+      "RelativePath": "index.html",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\index.html"
+    }
+  ]
+}
