@@ -1,0 +1,25 @@
+{
+  "Files": [
+    {
+      "Id": "C:\\Users\\Utente\\Desktop\\SOFIA STAGE\\ProgettoMeteo\\wwwroot\\index.html",
+      "PackagePath": "staticwebassets\\index.html"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.ProgettoMeteo.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.build.ProgettoMeteo.props",
+      "PackagePath": "build\\ProgettoMeteo.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildMultiTargeting.ProgettoMeteo.props",
+      "PackagePath": "buildMultiTargeting\\ProgettoMeteo.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildTransitive.ProgettoMeteo.props",
+      "PackagePath": "buildTransitive\\ProgettoMeteo.props"
+    }
+  ],
+  "ElementsToRemove": []
+}
