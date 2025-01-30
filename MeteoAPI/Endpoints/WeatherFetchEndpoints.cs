@@ -16,10 +16,10 @@
             {
                 City = city,
                 Description = "Weather data",
-                Temperature = weather.Hourly.Temperature2m.FirstOrDefault(),
+                Temperature = Math.Round(weather.Hourly.Temperature2m.FirstOrDefault()),
                 Humidity = weather.Current.RelativeHumidity,
-                Precipitation = weather.Current.Precipitation,
-                WindSpeed = weather.Current.WindSpeed,
+                Precipitation = Math.Round(weather.Current.Precipitation),
+                WindSpeed = Math.Round(weather.Current.WindSpeed, 1),
                 FetchedAt = DateTime.UtcNow
             };
 
