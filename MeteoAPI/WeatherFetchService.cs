@@ -4,11 +4,11 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using System.Web;
 
-public class WeatherService
+public class WeatherFetchService
 {
     private readonly HttpClient _httpClient;
 
-    public WeatherService(HttpClient httpClient)
+    public WeatherFetchService(HttpClient httpClient)
     {
         _httpClient = httpClient;
         _httpClient.DefaultRequestHeaders.Add("User-Agent", "WeatherApp/1.0");
@@ -48,7 +48,7 @@ public class WeatherService
         try
         {
             var (latitude, longitude) = await GetCityCoordinatesAsync(city);
-        
+
             var formattedUrl = string.Format(
                 CultureInfo.InvariantCulture,
                 "https://api.open-meteo.com/v1/forecast?latitude={0:F6}&longitude={1:F6}&current=relative_humidity_2m,precipitation,wind_speed_10m&hourly=temperature_2m",
@@ -108,4 +108,3 @@ public class CurrentData
     [JsonProperty("wind_speed_10m")]
     public float WindSpeed { get; set; }
 }
-

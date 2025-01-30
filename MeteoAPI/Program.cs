@@ -2,7 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddHttpClient<WeatherService>();
+builder.Services.AddHttpClient<WeatherFetchService>();
+builder.Services.AddScoped<IWeatherStorageService, WeatherStorageService>();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite("Data Source=weather.db"));
 
