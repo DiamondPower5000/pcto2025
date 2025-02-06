@@ -5,10 +5,7 @@
         app.MapGet("/api/weather", FetchWeather);
     }
 
-    public static async Task<IResult> FetchWeather(
-        string city,
-        IWeatherFetchService weatherService,
-        IWeatherStorageService storageService)
+    public static async Task<IResult> FetchWeather(string city, IWeatherFetchService weatherService, IWeatherStorageService storageService)
     {
         if (string.IsNullOrEmpty(city))
         {

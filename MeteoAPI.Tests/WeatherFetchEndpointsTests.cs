@@ -1,8 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.Extensions.Primitives;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
 using Moq;
-using Xunit;
+
 
 public class WeatherFetchEndpointsTests
 {
