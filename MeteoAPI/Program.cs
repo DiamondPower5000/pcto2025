@@ -9,6 +9,7 @@ builder.Services.AddScoped<IWeatherStorageService, WeatherStorageService>();
 // Register SQLite database
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite("Data Source=weather.db"));
+    
 
 // Configure CORS
 builder.Services.AddCors(options =>

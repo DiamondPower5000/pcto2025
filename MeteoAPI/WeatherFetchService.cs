@@ -12,7 +12,9 @@ public class WeatherFetchService : IWeatherFetchService
         _httpClient.DefaultRequestHeaders.Add("User-Agent", "WeatherApp/1.0");
     }
 
-    private async Task<(double lat, double lon)> GetCityCoordinatesAsync(string city)
+    public virtual async Task<(double lat, double lon)> GetCityCoordinatesAsync(string city)
+
+
     {
         var encodedCity = HttpUtility.UrlEncode(city);
         var geocodeUrl = $"https://nominatim.openstreetmap.org/search?q={encodedCity}&format=json&limit=1";
