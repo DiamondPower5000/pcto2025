@@ -1,51 +1,72 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System;
+﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using Xunit;
 
 public class WeatherStorageServiceTests
 {
+    private DbContextOptions<AppDbContext> CreateNewContextOptions()
+    {
+        return new DbContextOptionsBuilder<AppDbContext>()
+            .UseInMemoryDatabase(Guid.NewGuid().ToString()) // Use a unique DB per test
+            .Options;
+    }
+
     [Fact]
     public async Task StoreWeatherDataAsync_SavesRecordSuccessfully()
     {
         // Arrange
-        var options = new DbContextOptionsBuilder<AppDbContext>()
-            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
-            .Options;
+        var options = CreateNewContextOptions();
 
-        using (var dbContext = new AppDbContext(options))
+        using (var context = new AppDbContext(options))
         {
-            var storageService = new WeatherStorageService(dbContext);
+            var storageService = new WeatherStorageService(context);
             var record = new WeatherRecord
             {
-                City = "Milan",
-                Description = "Sunny",
-                Temperature = 25,
-                Humidity = 40,
-                Precipitation = 0,
-                WindSpeed = 5,
+                City = "Rome",
+                Description = "Partly Cloudy",
+                Temperature = 18.3f,
+                Humidity = 65,
+                Precipitation = 0.3f,
+                WindSpeed = 7.1f,
                 FetchedAt = DateTime.UtcNow
             };
 
             // Act
             await storageService.StoreWeatherDataAsync(record);
-            var savedRecord = await dbContext.WeatherRecords.FirstOrDefaultAsync();
+            var storedRecord = await context.WeatherRecords.FirstOrDefaultAsync(r => r.City == "Rome");
 
             // Assert
-            Assert.NotNull(savedRecord);
-            Assert.Equal("Milan", savedRecord.City);
-            Assert.Equal(25, savedRecord.Temperature);
+            Assert.NotNull(storedRecord);
+            Assert.Equal("Rome", storedRecord.City);
+            Assert.Equal("Partly Cloudy", storedRecord.Description);
         }
     }
 
     [Fact]
-    public async Task GetLatestWeatherDataAsync_ReturnsMostRecentRecord()
+    public async Task GetLatestWeatherDataAsync_ReturnsNull_WhenNoRecordExists()
     {
         // Arrange
-        var options = new DbContextOptionsBuilder<AppDbContext>()
-            .UseInMemoryDatabase(databaseName: "WeatherTestDB")
-            .Options;
+        var options = CreateNewContextOptions();
+
+        using (var context = new AppDbContext(options))
+        {
+            var storageService = new WeatherStorageService(context);
+
+            // Act
+            var result = await storageService.GetLatestWeatherDataAsync("UnknownCity");
+
+            // Assert
+            Assert.Null(result);
+        }
+    }
+
+    [Fact]
+    public async Task GetLatestWeatherDataAsync_OverwritesOlderRecord()
+    {
+        // Arrange
+        var options = CreateNewContextOptions();
 
         using (var context = new AppDbContext(options))
         {
@@ -53,57 +74,64 @@ public class WeatherStorageServiceTests
 
             var oldRecord = new WeatherRecord
             {
-                City = "Milan",
-                Description = "Cloudy", // Ensure required field is populated
-                Temperature = 20.5f,
-                Humidity = 60,
-                Precipitation = 1.2f,
-                WindSpeed = 10.5f,
-                FetchedAt = DateTime.UtcNow.AddHours(-1) // Older record
+                City = "Paris",
+                Description = "Rainy",
+                Temperature = 15.0f,
+                Humidity = 70,
+                Precipitation = 5.0f,
+                WindSpeed = 10.0f,
+                FetchedAt = DateTime.UtcNow.AddHours(-2)
             };
 
             var newRecord = new WeatherRecord
             {
-                City = "Milan",
-                Description = "Sunny", // Ensure required field is populated
-                Temperature = 25.5f,
-                Humidity = 50,
-                Precipitation = 0.5f,
-                WindSpeed = 5.5f,
-                FetchedAt = DateTime.UtcNow // Newer record
+                City = "Paris",
+                Description = "Clear Sky",
+                Temperature = 22.0f,
+                Humidity = 55,
+                Precipitation = 0.0f,
+                WindSpeed = 5.0f,
+                FetchedAt = DateTime.UtcNow
             };
 
             await storageService.StoreWeatherDataAsync(oldRecord);
             await storageService.StoreWeatherDataAsync(newRecord);
 
             // Act
-            var result = await storageService.GetLatestWeatherDataAsync("Milan");
+            var result = await storageService.GetLatestWeatherDataAsync("Paris");
 
             // Assert
             Assert.NotNull(result);
-            Assert.Equal("Milan", result.City);
-            Assert.Equal("Sunny", result.Description); // Check if latest record is returned
+            Assert.Equal("Paris", result.City);
+            Assert.Equal("Clear Sky", result.Description); // Ensures newest record is retrieved
         }
     }
 
-
     [Fact]
-    public async Task GetLatestWeatherDataAsync_ReturnsNull_WhenNoRecordsExist()
+    public async Task StoreWeatherDataAsync_AllowsPartialData()
     {
         // Arrange
-        var options = new DbContextOptionsBuilder<AppDbContext>()
-            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
-            .Options;
+        var options = CreateNewContextOptions();
 
-        using (var dbContext = new AppDbContext(options))
+        using (var context = new AppDbContext(options))
         {
-            var storageService = new WeatherStorageService(dbContext);
+            var storageService = new WeatherStorageService(context);
+            var record = new WeatherRecord
+            {
+                City = "Berlin",
+                Description = "Foggy",
+                FetchedAt = DateTime.UtcNow // Missing temperature, humidity, precipitation, wind speed
+            };
 
             // Act
-            var result = await storageService.GetLatestWeatherDataAsync("NonExistentCity");
+            await storageService.StoreWeatherDataAsync(record);
+            var storedRecord = await context.WeatherRecords.FirstOrDefaultAsync(r => r.City == "Berlin");
 
             // Assert
-            Assert.Null(result);
+            Assert.NotNull(storedRecord);
+            Assert.Equal("Berlin", storedRecord.City);
+            Assert.Equal("Foggy", storedRecord.Description);
+            Assert.Null(storedRecord.Temperature); // Ensures missing values don't cause failure
         }
     }
 }
