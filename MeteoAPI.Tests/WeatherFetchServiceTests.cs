@@ -1,10 +1,10 @@
 ﻿using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
+//using System.Net.Http;
+//using System.Threading.Tasks;
 using Moq;
 using Moq.Protected;
 using Newtonsoft.Json;
-using Xunit;
+//using Xunit;
 
 public class WeatherFetchServiceTests
 {
