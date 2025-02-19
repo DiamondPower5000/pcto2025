@@ -1,5 +1,4 @@
-﻿// Endpoints/WeatherLatestEndpoints.cs
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 public static class WeatherLatestEndpoints
 {

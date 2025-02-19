@@ -1,11 +1,17 @@
-// Program.cs
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddHttpClient<WeatherService>();
+
+// Register WeatherFetchService with an interface
+builder.Services.AddHttpClient<IWeatherFetchService, WeatherFetchService>();
+builder.Services.AddScoped<IWeatherStorageService, WeatherStorageService>();
+
+// Register SQLite database
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite("Data Source=weather.db"));
+    
 
+// Configure CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll",
@@ -16,12 +22,15 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+
+// Enable serving static files
 app.UseStaticFiles();
-app.MapFallbackToFile("index.html");
 
-
+// Map endpoints
 app.MapWeatherFetchEndpoints();
 app.MapWeatherLatestEndpoints();
 
+// Apply CORS policy
 app.UseCors("AllowAll");
+
 app.Run();

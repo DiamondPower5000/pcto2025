@@ -1,40 +1,30 @@
-﻿// Endpoints/WeatherFetchEndpoints.cs
-using Microsoft.EntityFrameworkCore;
-
-public static class WeatherFetchEndpoints
+﻿public static class WeatherFetchEndpoints
 {
     public static void MapWeatherFetchEndpoints(this WebApplication app)
     {
-        // Endpoint to fetch and store weather data
-        app.MapGet("/api/weather", async (string city, WeatherService weatherService, AppDbContext dbContext) =>
+        app.MapGet("/api/weather", FetchWeather);
+    }
+
+    public static async Task<IResult> FetchWeather(string city, IWeatherFetchService weatherService, IWeatherStorageService storageService)
+    {
+        if (string.IsNullOrEmpty(city))
         {
-            if (string.IsNullOrEmpty(city))
-            {
-                return Results.BadRequest("City parameter is required.");
-            }
+            return Results.BadRequest("City parameter is required.");
+        }
 
-            var weather = await weatherService.GetWeatherAsync(city);
-            if (weather == null || weather.Hourly?.Temperature2m == null || weather.Hourly.Temperature2m.Count == 0)
-            {
-                return Results.NotFound("Weather data not found for the provided city.");
-            }
+        var weather = await weatherService.GetWeatherAsync(city);
+        var record = new WeatherRecord
+        {
+            City = city,
+            Description = "Weather data",
+            Temperature = Math.Round(weather.Hourly.Temperature2m.FirstOrDefault()),
+            Humidity = weather.Current.RelativeHumidity,
+            Precipitation = Math.Round(weather.Current.Precipitation),
+            WindSpeed = Math.Round(weather.Current.WindSpeed, 1),
+            FetchedAt = DateTime.UtcNow
+        };
 
-            var temperature = weather.Hourly.Temperature2m.FirstOrDefault();
-            var record = new WeatherRecord
-            {
-                City = city,
-                Description = "Weather data",
-                Temperature = temperature,
-                Humidity = weather.Current.RelativeHumidity,
-                Precipitation = weather.Current.Precipitation,
-                WindSpeed = weather.Current.WindSpeed,
-                FetchedAt = DateTime.UtcNow
-            };
-
-            dbContext.WeatherRecords.Add(record);
-            await dbContext.SaveChangesAsync();
-
-            return Results.Json(record);
-        });
+        await storageService.StoreWeatherDataAsync(record);
+        return Results.Json(record);
     }
 }
